@@ -17,51 +17,176 @@ scheme.
 
 ## Training data
 
-### Data set size
+### General Questions
+
+#### Number of training samples
 
 How many training data samples should be used?
 
--   as many as possible: ([Millard and Richardson
-    2015](#ref-millardImportanceTrainingData2015))
--   not sensitive to reduction: ([Rodriguez-Galiano et al.
-    2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012))
+In addition to a total number (5400)
+[Colditz](#ref-colditzEvaluationDifferentTraining2015)
+([2015](#ref-colditzEvaluationDifferentTraining2015)) also reported a
+size relative to the study area (0.25%). Many studies and technical
+notes report a minimal number of samples per class (e.g. 50).
 
-How to distribute the training data among classes?
+According to [Millard and
+Richardson](#ref-millardImportanceTrainingData2015)
+([2015](#ref-millardImportanceTrainingData2015)) as many training data
+samples as possible are recommended to improve classification accuracy
+and stability. [Rodriguez-Galiano et
+al.](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)
+([2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)) in
+contrast, tested the effect of training data reduction and found that RF
+is not sensitive to a reduction until a certain threshold. They also
+state that training data size is not problematic for homogeneous
+classes, but larger number of samples are necessary for classes with
+high variability.
 
--   area proportional: ([Colditz
-    2015](#ref-colditzEvaluationDifferentTraining2015); [Freeman
-    2012](#ref-freemanEvaluatingEffectivenessDownsampling2012); [Millard
-    and Richardson 2015](#ref-millardImportanceTrainingData2015))
--   balanced is good but fine imbalance (best/worst class) is better
-    ([Mellor 2015](#ref-mellorExploringIssuesTraining2015))
+Hypothesis: The more the better. Optimal number of training samples
+(consent between cost and classification result) is dependent on the
+number of classes and class separability.
 
-If data has to be resampled what method should be used?
-
--   upsampling: ([Japkowicz and Stephen
-    2002](#ref-japkowiczClassImbalanceProblem2002); [McCarthy, Zabar,
-    and Weiss 2005](#ref-mccarthyDoesCostsensitiveLearning2005))
-
-Which other methods are suggested to consider class imbalance?
-
--   threshold optimization: ([Freeman
-    2012](#ref-freemanEvaluatingEffectivenessDownsampling2012))
--   balanced random forest: ([C. Chen
-    2004](#ref-chenUsingRandomForest2004))
--   weighted random forest: ([C. Chen
-    2004](#ref-chenUsingRandomForest2004))
--   cost sensitive learning: ([Japkowicz and Stephen
-    2002](#ref-japkowiczClassImbalanceProblem2002); [McCarthy, Zabar,
-    and Weiss 2005](#ref-mccarthyDoesCostsensitiveLearning2005))
+#### Distribution within classes
 
 Is it better to use homogeneous or heterogeneous data within classes?
 
--   heterogeneous: ([Colditz
-    2015](#ref-colditzEvaluationDifferentTraining2015))
+A number of studies suggest that training data should be heterogeneous
+to represent all the variability present in a category ([Pal and Mather
+2003](#ref-palAssessmentEffectivenessDecision2003); [Rodriguez-Galiano
+et al. 2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)).
+But as [Colditz](#ref-colditzEvaluationDifferentTraining2015)
+([2015](#ref-colditzEvaluationDifferentTraining2015)) and [Millard and
+Richardson](#ref-millardImportanceTrainingData2015)
+([2015](#ref-millardImportanceTrainingData2015)) already state, a widely
+used method for training data collection in large-area mapping projects
+is to use polygons in homogeneous areas, which produces highly clustered
+and spatially auto-correlated training samples. Training data does not
+necessarily have to be spatially evenly distributed. However, doing so
+(e.g. via systematic or simple random sampling) ensures spectrally
+heterogeneous training data which is recommended.
+
+Should outliers be removed from training data samples a priori?
+
+According to the literature Random Forest classification is not very
+sensitive to outliers and hence it might not be necessary to treat
+outliers ([Rodriguez-Galiano et al.
+2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)). This
+might be the reason why most studies do not mention outliers in their
+training data set. Considering the principle to select heterogeneous
+training data the removal of outliers might even be counterproductive.
+On the other side training data might contain mislabeled data and the
+treatment of outliers per class could assist removing false samples from
+training data. The effect is unclear as it is not known if and how many
+samples are labeled wrong and also it might be unnecessary as RF is
+relatively robust to noise ([Rodriguez-Galiano et al.
+2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)).
+
+### Questions for classes of different sizes
+
+#### Distribution between classes
+
+How to distribute the training data among classes?
+
+Class imbalance is known for increasing the bias towards the majority
+class ([Dittman, Khoshgoftaar, and Napolitano
+2015](#ref-dittmanEffectDataSampling2015)). [Dittman, Khoshgoftaar, and
+Napolitano](#ref-dittmanEffectDataSampling2015)
+([2015](#ref-dittmanEffectDataSampling2015)) found that RF is relatively
+robust to imbalanced data.
+
+Many studies suggest to balance the training data in order to achieve
+good classification results. But usually these studies make no
+assumptions about the underlying class abundance in the data set they
+want to classify. Either they simply do not have this information or
+they assume it is equally distributed. But also for heavily imbalanced
+data sets many studies suggest some kind of resampling to balance the
+training data. The majority deals with two-class problems where one
+class is rare and this class should be classified with high precision
+(e.g. tumor cells). For this case they have shown that a balanced data
+set performs better in predicting the rare class. Land-cover classes are
+seldom evenly distributed in the landscape. The same applies for tree
+species. Also, the goal is to produce a land-cover map with an overall
+high accuracy and not just for one class. Hence, it is of interest to
+which degree the distribution of training samples among classes effects
+the classification outcome.
+[Colditz](#ref-colditzEvaluationDifferentTraining2015)
+([2015](#ref-colditzEvaluationDifferentTraining2015)),
+[Freeman](#ref-freemanEvaluatingEffectivenessDownsampling2012)
+([2012](#ref-freemanEvaluatingEffectivenessDownsampling2012)) and
+[Millard and Richardson](#ref-millardImportanceTrainingData2015)
+([2015](#ref-millardImportanceTrainingData2015)) found that area
+proportional sampling of training data performs better than balanced
+data. [Mellor](#ref-mellorExploringIssuesTraining2015)
+([2015](#ref-mellorExploringIssuesTraining2015)) also found that a fine
+imbalance can be introduced (between best and worst performing classes)
+to improve the accuracy. Nevertheless, most studies use balanced
+training data sets.
+
+#### Methodoloy for redistribution
+
+If data has to be resampled what method should be used?
+
+In the case of systematic sampling or simple random sampling the
+training data is area-proportional and thus fulfills the recommendations
+in the literature (see above). But there might also be cases when
+resampling is necessary, for example if training data is collected in
+subjective polygons and should be resized to fit actual class
+proportions or if the classification of difficult classes should be
+enhanced. Many studies evaluated the performance of various resampling
+techniques for the classification of imbalanced classes in general and
+for RF in particular. The most widely used methods are Upsampling (syn.
+Oversampling), where samples from the rare class are drawn multiple
+times to increase samples from this class, and Downsampling (syn.
+Undersampling), where only a part of the majority class is sampled to
+reduce the size. In Synthetic Minority Oversampling (SMOTE) new
+synthetic samples are created and drawn from the feature space of the
+minority class. Undersampling of the majority class is integrated in the
+RF algorithm and called Balanced Random Forest (BRF). Weighted Random
+Forest (WRF) uses the idea of cost-sensitive learning.
+
+[Dittman, Khoshgoftaar, and
+Napolitano](#ref-dittmanEffectDataSampling2015)
+([2015](#ref-dittmanEffectDataSampling2015)) found no statistical
+difference between under-sampling, over-sampling and SMOTE-sampling for
+RF. And also [McCarthy, Zabar, and
+Weiss](#ref-mccarthyDoesCostsensitiveLearning2005)
+([2005](#ref-mccarthyDoesCostsensitiveLearning2005)) found no consistent
+winner between cost-sensitive learning, up-sampling and down-sampling.
+But they conclude that cost-sensitive learning tends to outperform
+sampling methods for large data sets and that up-sampling tends to
+perform better than down-sampling for small data sets. [Japkowicz and
+Stephen](#ref-japkowiczClassImbalanceProblem2002)
+([2002](#ref-japkowiczClassImbalanceProblem2002)) also propose to use
+cost-sensitive learning over sampling methods. [C.
+Chen](#ref-chenUsingRandomForest2004)
+([2004](#ref-chenUsingRandomForest2004)) propose Balanced Random Forest
+(sampling) and Weighted Random Forest (cost-sensitive) to give good
+results but state that WRF might be more vulnarable to noise (mislabeled
+data). [Freeman](#ref-freemanEvaluatingEffectivenessDownsampling2012)
+([2012](#ref-freemanEvaluatingEffectivenessDownsampling2012)) evaluated
+the effectiveness of down-sampling and found that it did not improve
+classification performance. Instead they suggest to use threshold
+optimization.
+
+### Options not directly related to training data
+
+#### Number of predictor variables
 
 Is it better to use more or less predictor variables?
 
--   as few as necessary: ([Millard and Richardson
-    2015](#ref-millardImportanceTrainingData2015))
+Some studies perform feature selection methods to reduce the number of
+predictor variables. In most cases this is rather used to reduce the
+computational effort than to improve the classification accuracy. Most
+studies however, simply choose predictor variables a priori and stick to
+them. [Millard and Richardson](#ref-millardImportanceTrainingData2015)
+([2015](#ref-millardImportanceTrainingData2015)) found that many
+variables introduced noise in the classification and accuracy was lower.
+They advise to remove correlated variables and use only the most
+important variables for prediction.
+
+#### Hyperparameter
+
+Number of trees Minimum Leaf size Number of variables per split
 
 ## Key Statements
 
@@ -74,6 +199,9 @@ al.](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)
 -   used equal number of samples per class
 -   as RF generates unbiased estimation of error (oob) a validation data
     set is unnecessary
+-   “For homogeneous classes, training data size is not problematic, but
+    it is necessary to use a larger number of training sites for classes
+    with high variability.”
 
 [Colditz](#ref-colditzEvaluationDifferentTraining2015)
 ([2015](#ref-colditzEvaluationDifferentTraining2015))
@@ -318,6 +446,16 @@ Using Decision Tree-Based Algorithms.” *Remote Sensing* 7 (8, 8):
 
 </div>
 
+<div id="ref-dittmanEffectDataSampling2015" class="csl-entry">
+
+Dittman, David J., Taghi M. Khoshgoftaar, and Amri Napolitano. 2015.
+“The Effect of Data Sampling When Using Random Forest on Imbalanced
+Bioinformatics Data.” In *2015 IEEE International Conference on
+Information Reuse and Integration*, 457–63. San Francisco, CA, USA:
+IEEE. <https://doi.org/10.1109/IRI.2015.76>.
+
+</div>
+
 <div id="ref-freemanEvaluatingEffectivenessDownsampling2012"
 class="csl-entry">
 
@@ -394,6 +532,15 @@ Photogrammetry and Remote Sensing*, 14.
 Millard, Koreen, and Murray Richardson. 2015. “On the Importance of
 Training Data Sample Selection in Random Forest Image Classification: A
 Case Study in Peatland Ecosystem Mapping,” 27.
+
+</div>
+
+<div id="ref-palAssessmentEffectivenessDecision2003" class="csl-entry">
+
+Pal, Mahesh, and Paul M Mather. 2003. “An Assessment of the
+Effectiveness of Decision Tree Methods for Land Cover Classification.”
+*Remote Sensing of Environment* 86 (4): 554–65.
+<https://doi.org/10.1016/S0034-4257(03)00132-9>.
 
 </div>
 
