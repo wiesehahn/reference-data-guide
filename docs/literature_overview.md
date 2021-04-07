@@ -13,7 +13,9 @@ different requirements exist. Training data requirements are dependent
 on the classification algorithm and do not necessarily need to be
 uncorrelated. For an unbiased estimation of classification accuracy the
 validation data on the other hand needs to follow a probability sampling
-scheme.
+scheme. Apart from training and validation data RF also requires an
+independent reference data set for sound parameter tuning ([Fabian Ewald
+Fassnacht et al. 2016](#ref-fassnachtReviewStudiesTree2016)).
 
 ## Training data
 
@@ -28,6 +30,9 @@ In addition to a total number (5400)
 ([2015](#ref-colditzEvaluationDifferentTraining2015)) also reported a
 size relative to the study area (0.25%). Many studies and technical
 notes report a minimal number of samples per class (e.g. 50).
+[Colditz](#ref-colditzEvaluationDifferentTraining2015)
+([2015](#ref-colditzEvaluationDifferentTraining2015)) found a minimum
+size of 50 samples per class to increase classification accuracy.
 
 According to [Millard and
 Richardson](#ref-millardImportanceTrainingData2015)
@@ -40,7 +45,10 @@ contrast, tested the effect of training data reduction and found that RF
 is not sensitive to a reduction until a certain threshold. They also
 state that training data size is not problematic for homogeneous
 classes, but larger number of samples are necessary for classes with
-high variability.
+high variability. Generally training data needs to be larger for higher
+data dimensions (number of predictor variables) to mitigate the so
+called Hughes phenomenon ([Belgiu and Dragut
+2016](#ref-belgiuRandomForestRemote2016)).
 
 Hypothesis: The more the better. Optimal number of training samples
 (consent between cost and classification result) is dependent on the
@@ -54,7 +62,11 @@ A number of studies suggest that training data should be heterogeneous
 to represent all the variability present in a category ([Pal and Mather
 2003](#ref-palAssessmentEffectivenessDecision2003); [Rodriguez-Galiano
 et al. 2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)).
-But as [Colditz](#ref-colditzEvaluationDifferentTraining2015)
+[Colditz](#ref-colditzEvaluationDifferentTraining2015)
+([2015](#ref-colditzEvaluationDifferentTraining2015)) evaluated
+homogeneous and heterogeneous training data and found a significant
+accuracy increase with heterogeneous training samples. But as
+[Colditz](#ref-colditzEvaluationDifferentTraining2015)
 ([2015](#ref-colditzEvaluationDifferentTraining2015)) and [Millard and
 Richardson](#ref-millardImportanceTrainingData2015)
 ([2015](#ref-millardImportanceTrainingData2015)) already state, a widely
@@ -81,6 +93,9 @@ samples are labeled wrong and also it might be unnecessary as RF is
 relatively robust to noise ([Rodriguez-Galiano et al.
 2012](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)).
 
+Many studies use homogeneous reference data (e.g. pure forest stands) to
+avoid uncertain reference data.
+
 ### Questions for classes of different sizes
 
 #### Distribution between classes
@@ -102,25 +117,47 @@ they assume it is equally distributed. But also for heavily imbalanced
 data sets many studies suggest some kind of resampling to balance the
 training data. The majority deals with two-class problems where one
 class is rare and this class should be classified with high precision
-(e.g. tumor cells). For this case they have shown that a balanced data
-set performs better in predicting the rare class. Land-cover classes are
-seldom evenly distributed in the landscape. The same applies for tree
-species. Also, the goal is to produce a land-cover map with an overall
-high accuracy and not just for one class. Hence, it is of interest to
-which degree the distribution of training samples among classes effects
-the classification outcome.
+(e.g. fraud detection or rare desease diagnosing) ([Chen and Breiman
+2004](#ref-chenUsingRandomForest2004a)). For this case they have shown
+that a balanced data set performs better in predicting the rare class.
+Land-cover classes are seldom evenly distributed in the landscape. The
+same applies for tree species. Also, the goal is to produce a land-cover
+map with an overall high accuracy and not just for one class. Hence, it
+is of interest to which degree the distribution of training samples
+among classes effects the classification outcome. [Jin, Stehman, and
+Mountrakis](#ref-jinAssessingImpactTraining2014)
+([2014](#ref-jinAssessingImpactTraining2014)) showed that the
+proportionally allocated training sample design increases user’s
+accuracy of the under-represented classes, and that the equally
+allocated training sample schema increases producer’s accuracy of the
+under-represented classes. A number of studies found that area
+proportional sampling of training data performs better than balanced
+data if the priority objective is to increase overall accuracy (e.g.
 [Colditz](#ref-colditzEvaluationDifferentTraining2015)
 ([2015](#ref-colditzEvaluationDifferentTraining2015)),
 [Freeman](#ref-freemanEvaluatingEffectivenessDownsampling2012)
-([2012](#ref-freemanEvaluatingEffectivenessDownsampling2012)) and
-[Millard and Richardson](#ref-millardImportanceTrainingData2015)
-([2015](#ref-millardImportanceTrainingData2015)) found that area
-proportional sampling of training data performs better than balanced
-data. [Mellor](#ref-mellorExploringIssuesTraining2015)
+([2012](#ref-freemanEvaluatingEffectivenessDownsampling2012)), [Millard
+and Richardson](#ref-millardImportanceTrainingData2015)
+([2015](#ref-millardImportanceTrainingData2015)), [Jin, Stehman, and
+Mountrakis](#ref-jinAssessingImpactTraining2014)
+([2014](#ref-jinAssessingImpactTraining2014)), and
+[Mellor](#ref-mellorExploringIssuesTraining2015)
+([2015](#ref-mellorExploringIssuesTraining2015))) or area estimations
+([Colditz 2015](#ref-colditzEvaluationDifferentTraining2015)).
+[Mellor](#ref-mellorExploringIssuesTraining2015)
 ([2015](#ref-mellorExploringIssuesTraining2015)) also found that a fine
 imbalance can be introduced (between best and worst performing classes)
-to improve the accuracy. Nevertheless, most studies use balanced
-training data sets.
+to reduce errors in the most challenging classes. Hence, the choice of
+data allocation depends on which accuracy objectives have higher
+priority.
+
+Nevertheless, most studies use balanced training data sets.
+
+In a review on tree species classification [Fabian Ewald Fassnacht et
+al.](#ref-fassnachtReviewStudiesTree2016)
+([2016](#ref-fassnachtReviewStudiesTree2016)) mention the need for
+further research about classification approaches that include
+pre-knowledge on the expected class distribution.
 
 #### Methodoloy for redistribution
 
@@ -138,10 +175,12 @@ for RF in particular. The most widely used methods are Upsampling (syn.
 Oversampling), where samples from the rare class are drawn multiple
 times to increase samples from this class, and Downsampling (syn.
 Undersampling), where only a part of the majority class is sampled to
-reduce the size. In Synthetic Minority Oversampling (SMOTE) new
-synthetic samples are created and drawn from the feature space of the
-minority class. Undersampling of the majority class is integrated in the
-RF algorithm and called Balanced Random Forest (BRF). Weighted Random
+reduce the size. Othe methods include Synthetic Minority Oversampling
+(SMOTE), where new synthetic samples are created and drawn from the
+feature space of the minority class, or Partial Random Over-Sampling and
+Random Under-Sampling (PROSUS) where oversampling and undersampling are
+combined. Undersampling of the majority class is integrated in the RF
+algorithm and called Balanced Random Forest (BRF). Weighted Random
 Forest (WRF) uses the idea of cost-sensitive learning.
 
 [Dittman, Khoshgoftaar, and
@@ -157,11 +196,11 @@ sampling methods for large data sets and that up-sampling tends to
 perform better than down-sampling for small data sets. [Japkowicz and
 Stephen](#ref-japkowiczClassImbalanceProblem2002)
 ([2002](#ref-japkowiczClassImbalanceProblem2002)) also propose to use
-cost-sensitive learning over sampling methods. [C.
-Chen](#ref-chenUsingRandomForest2004)
+cost-sensitive learning over sampling methods.
+[Chen](#ref-chenUsingRandomForest2004)
 ([2004](#ref-chenUsingRandomForest2004)) propose Balanced Random Forest
 (sampling) and Weighted Random Forest (cost-sensitive) to give good
-results but state that WRF might be more vulnarable to noise (mislabeled
+results but state that WRF might be more vulnerable to noise (mislabeled
 data). [Freeman](#ref-freemanEvaluatingEffectivenessDownsampling2012)
 ([2012](#ref-freemanEvaluatingEffectivenessDownsampling2012)) evaluated
 the effectiveness of down-sampling and found that it did not improve
@@ -182,11 +221,33 @@ them. [Millard and Richardson](#ref-millardImportanceTrainingData2015)
 ([2015](#ref-millardImportanceTrainingData2015)) found that many
 variables introduced noise in the classification and accuracy was lower.
 They advise to remove correlated variables and use only the most
-important variables for prediction.
+important variables for prediction. And [F. E. Fassnacht et
+al.](#ref-fassnachtComparisonFeatureReduction2014)
+([2014](#ref-fassnachtComparisonFeatureReduction2014)) found that
+classification approaches using feature selection for hyperspectral data
+outperfomed approaches based on all bands.
 
 #### Hyperparameter
 
 Number of trees Minimum Leaf size Number of variables per split
+
+## Validation data
+
+Comparing studies is challenging, as it needs to be considered that
+accuracies are affected by the characteristics of the studied
+populations and different designs of the reference data ([Breidenbach et
+al. 2020](#ref-breidenbachNationalMappingEstimation2020)).
+
+[Fabian Ewald Fassnacht et al.](#ref-fassnachtReviewStudiesTree2016)
+([2016](#ref-fassnachtReviewStudiesTree2016)) state that many studies on
+tree species detection use unrepresentative and biased reference data
+(e.g. dominant trees), which leads to optimistic reported accuracies.
+
+[Congalton](#ref-congaltonReviewAssessingAccuracy1991)
+([1991](#ref-congaltonReviewAssessingAccuracy1991)) mentioned a minimum
+of 50 samples per class. Although he warned that an appropriate sample
+size is dependent on a number of classification properties many studies
+relate to this.
 
 ## Key Statements
 
@@ -240,7 +301,7 @@ al.](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)
     the Balanced model was considerably improved by threshold
     optimization”
 
-[Chao Chen and Breiman](#ref-chenUsingRandomForest2004a)
+[Chen and Breiman](#ref-chenUsingRandomForest2004a)
 ([2004](#ref-chenUsingRandomForest2004a))
 
 -   “similar to most classifiers, RF can also suffer from the curse of
@@ -330,6 +391,27 @@ al.](#ref-rodriguez-galianoAssessmentEffectivenessRandom2012)
 -   “spatial autocorrelation should be minimized within the training and
     validation data sample points”
 
+[Belgiu and Dragut](#ref-belgiuRandomForestRemote2016)
+([2016](#ref-belgiuRandomForestRemote2016))
+
+-   Training and validation data must be statistically independent.
+-   training samples must be class balanced
+-   training samples must be representative of the target classes
+-   the training sample needs to be large enough to accommodate the
+    increasing number of data dimensions (to mitigate the Hughes
+    phenomenon).
+
+[Naboureh et al.](#ref-nabourehHybridDataBalancing2020)
+([2020](#ref-nabourehHybridDataBalancing2020))
+
+-   propose another resampling method called PROSUS (Partial Random
+    Over-Sampling and Random Under-Sampling)
+-   state that “PROSRUS outperformed all other data balancing
+    techniques, including ROS, RUS, SMOTE, and G-SMOTE”
+-   “every dataset requires a specific balancing ratio to obtain the
+    optimal result because the imbalance ratios and complexity levels
+    are different for different datasets”
+
 ## Schemes used in selected studies
 
 [Wessel, Brandmeier, and
@@ -357,7 +439,7 @@ Reese](#ref-perssonTreeSpeciesClassification2018)
 -   equal number of samples per class
 -   only sparse information about the validation data and process
 
-[Hościło and Lewandowska](#ref-hosciloMappingForestType2019)
+[Hoscilo and Lewandowska](#ref-hosciloMappingForestType2019)
 ([2019](#ref-hosciloMappingForestType2019))
 
 -   (almost) equal number of samples per class
@@ -381,6 +463,7 @@ Fensholt](#ref-bjerreskovForestTypeTree2021)
 -   validation data from different plots
 -   only dominant stands
 -   more or less proportional reference data (train and validation)
+-   all prediction variables were found to be significant
 
 [Kollert et al.](#ref-kollertExploringPotentialLand2021)
 ([2021](#ref-kollertExploringPotentialLand2021))
@@ -402,7 +485,24 @@ Fensholt](#ref-bjerreskovForestTypeTree2021)
 -   models were validated using cross-validation with training data
 -   models were validated with independent forest stands
 
+[Kovacevic et
+al.](#ref-KovacevicSpatioTemporalClassificationFramework2020)
+([2020](#ref-KovacevicSpatioTemporalClassificationFramework2020))
+
+-   reference data from subjective polygons
+-   samples were equalized to same size by upsampling rare classes
+-   folded leave-location-out cross-validation used
+
 <div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-belgiuRandomForestRemote2016" class="csl-entry">
+
+Belgiu, Mariana, and Lucian Dragut. 2016. “Random Forest in Remote
+Sensing: A Review of Applications and Future Directions.” *ISPRS Journal
+of Photogrammetry and Remote Sensing* 114 (April): 24–31.
+<https://doi.org/10.1016/j.isprsjprs.2016.01.011>.
+
+</div>
 
 <div id="ref-bjerreskovForestTypeTree2021" class="csl-entry">
 
@@ -425,8 +525,7 @@ Dominant Tree Species Using Sentinel-2 Data*.
 
 <div id="ref-chenUsingRandomForest2004" class="csl-entry">
 
-Chen, C. 2004. “Using Random Forest to Learn Imbalanced Data.” 2004.
-[/paper/Using-Random-Forest-to-Learn-Imbalanced-Data-Chen/2138b37bfced70599d26dfccbf93a8e7a4b7ad85](https:///paper/Using-Random-Forest-to-Learn-Imbalanced-Data-Chen/2138b37bfced70599d26dfccbf93a8e7a4b7ad85).
+Chen, Chao. 2004. “Using Random Forest to Learn Imbalanced Data,” 12.
 
 </div>
 
@@ -439,10 +538,19 @@ Imbalanced Data.” *University of California, Berkeley*, January.
 
 <div id="ref-colditzEvaluationDifferentTraining2015" class="csl-entry">
 
-Colditz, RenÃÂ Roland. 2015. “An Evaluation of Different Training Sample
+Colditz, René Roland. 2015. “An Evaluation of Different Training Sample
 Allocation Schemes for Discrete and Continuous Land Cover Classification
-Using Decision Tree-Based Algorithms.” *Remote Sensing* 7 (8, 8):
-9655–81. <https://doi.org/10.3390/rs70809655>.
+Using Decision Tree-Based Algorithms.” *Remote Sensing* 7 (8): 9655–81.
+<https://doi.org/10.3390/rs70809655>.
+
+</div>
+
+<div id="ref-congaltonReviewAssessingAccuracy1991" class="csl-entry">
+
+Congalton, Russell G. 1991. “A Review of Assessing the Accuracy of
+Classifications of Remotely Sensed Data.” *Remote Sensing of
+Environment* 37 (1): 35–46.
+<https://doi.org/10.1016/0034-4257(91)90048-B>.
 
 </div>
 
@@ -453,6 +561,27 @@ Dittman, David J., Taghi M. Khoshgoftaar, and Amri Napolitano. 2015.
 Bioinformatics Data.” In *2015 IEEE International Conference on
 Information Reuse and Integration*, 457–63. San Francisco, CA, USA:
 IEEE. <https://doi.org/10.1109/IRI.2015.76>.
+
+</div>
+
+<div id="ref-fassnachtComparisonFeatureReduction2014" class="csl-entry">
+
+Fassnacht, F. E., C. Neumann, M. Förster, H. Buddenbaum, A. Ghosh, A.
+Clasen, P. K. Joshi, and B. Koch. 2014. “Comparison of Feature Reduction
+Algorithms for Classifying Tree Species With Hyperspectral Data on Three
+Central European Test Sites.” *IEEE Journal of Selected Topics in
+Applied Earth Observations and Remote Sensing* 7 (6): 2547–61.
+<https://doi.org/10.1109/JSTARS.2014.2329390>.
+
+</div>
+
+<div id="ref-fassnachtReviewStudiesTree2016" class="csl-entry">
+
+Fassnacht, Fabian Ewald, Hooman Latifi, Krzysztof Stereńczak, Aneta
+Modzelewska, Michael Lefsky, Lars T. Waser, Christoph Straub, and
+Aniruddha Ghosh. 2016. “Review of Studies on Tree Species Classification
+from Remotely Sensed Data.” *Remote Sensing of Environment* 186
+(December): 64–87. <https://doi.org/10.1016/j.rse.2016.08.013>.
 
 </div>
 
@@ -475,7 +604,7 @@ Time Series,” 24.
 
 <div id="ref-hosciloMappingForestType2019" class="csl-entry">
 
-Hościło, Agata, and Aneta Lewandowska. 2019. “Mapping Forest Type and
+Hoscilo, Agata, and Aneta Lewandowska. 2019. “Mapping Forest Type and
 Tree Species on a Regional Scale Using Multi-Temporal Sentinel-2 Data.”
 *Remote Sensing* 11 (8): 929. <https://doi.org/10.3390/rs11080929>.
 
@@ -484,18 +613,40 @@ Tree Species on a Regional Scale Using Multi-Temporal Sentinel-2 Data.”
 <div id="ref-japkowiczClassImbalanceProblem2002" class="csl-entry">
 
 Japkowicz, Nathalie, and Shaju Stephen. 2002. “The Class Imbalance
-Problem: A Systematic Study.” *Intelligent Data Analysis* 6 (5): 429–49.
+Problem: A Systematic Study.” *Intell. Data Anal.* 6 (5): 429–49.
+
+</div>
+
+<div id="ref-jinAssessingImpactTraining2014" class="csl-entry">
+
+Jin, Huiran, Stephen V. Stehman, and Giorgos Mountrakis. 2014.
+“Assessing the Impact of Training Sample Selection on Accuracy of an
+Urban Classification: A Case Study in Denver, Colorado.” *International
+Journal of Remote Sensing* 35 (6): 2067–81.
+<https://doi.org/10.1080/01431161.2014.885152>.
 
 </div>
 
 <div id="ref-kollertExploringPotentialLand2021" class="csl-entry">
 
-Kollert, Andreas, Magnus Bremer, Markus LÃÂ¶w, and Martin Rutzinger.
-2021. “Exploring the Potential of Land Surface Phenology and Seasonal
-Cloud Free Composites of One Year of Sentinel-2 Imagery for Tree Species
+Kollert, Andreas, Magnus Bremer, Markus Löw, and Martin Rutzinger. 2021.
+“Exploring the Potential of Land Surface Phenology and Seasonal Cloud
+Free Composites of One Year of Sentinel-2 Imagery for Tree Species
 Mapping in a Mountainous Region.” *International Journal of Applied
 Earth Observation and Geoinformation* 94 (February): 102208.
 <https://doi.org/10.1016/j.jag.2020.102208>.
+
+</div>
+
+<div id="ref-KovacevicSpatioTemporalClassificationFramework2020"
+class="csl-entry">
+
+Kovacevic, Jovan, Zeljko Cvijetinovic, Dmitar Lakusic, Nevena
+Kuzmanovic, Jasmina Sinzar-Sekulic, Momir Mitrovic, Nikola Stancic,
+Nenad Brodic, and Dragan Mihajlovic. 2020. “Spatio-Temporal
+Classification Framework for Mapping Woody Vegetation from
+Multi-Temporal Sentinel-2 Imagery.” *Remote Sensing* 12 (17): 2845.
+<https://doi.org/10.3390/rs12172845>.
 
 </div>
 
@@ -532,6 +683,16 @@ Photogrammetry and Remote Sensing*, 14.
 Millard, Koreen, and Murray Richardson. 2015. “On the Importance of
 Training Data Sample Selection in Random Forest Image Classification: A
 Case Study in Peatland Ecosystem Mapping,” 27.
+
+</div>
+
+<div id="ref-nabourehHybridDataBalancing2020" class="csl-entry">
+
+Naboureh, Amin, Ainong Li, Jinhu Bian, Guangbin Lei, and Meisam Amani.
+2020. “A Hybrid Data Balancing Method for Classification of Imbalanced
+Training Data Within Google Earth Engine: Case Studies from Mountainous
+Regions.” *Remote Sensing* 12 (20): 3301.
+<https://doi.org/10.3390/rs12203301>.
 
 </div>
 

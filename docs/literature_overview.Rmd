@@ -1,6 +1,6 @@
 ---
 output: github_document
-bibliography: ["../literature.bib"]
+bibliography: ["../references.bib"]
 link-citations: true
 ---
 
@@ -8,7 +8,9 @@ link-citations: true
 
 ## A Guide for Tree Species Classification with Multispectral Satellite Imagery
 
-Often, one set of reference data is used for training and validation. Whereas splitting the data set in a training set and a validation set is a valid option as long as they are independent (?), using the same data for both does not result in an unbiased accuracy estimation. But also splitting a data set and using one part for the prediction and and the other part for the validation is in many cases not the best option as different requirements exist. Training data requirements are dependent on the classification algorithm and do not necessarily need to be uncorrelated. For an unbiased estimation of classification accuracy the validation data on the other hand needs to follow a probability sampling scheme.
+
+Often, one set of reference data is used for training and validation. Whereas splitting the data set in a training set and a validation set is a valid option as long as they are independent (?), using the same data for both does not result in an unbiased accuracy estimation. But also splitting a data set and using one part for the prediction and and the other part for the validation is in many cases not the best option as different requirements exist. Training data requirements are dependent on the classification algorithm and do not necessarily need to be uncorrelated. For an unbiased estimation of classification accuracy the validation data on the other hand needs to follow a probability sampling scheme. 
+Apart from training and validation data RF also requires an independent reference data set for sound parameter tuning [@fassnachtReviewStudiesTree2016]. 
 
 ## Training data
 
@@ -18,9 +20,9 @@ Often, one set of reference data is used for training and validation. Whereas sp
 
 How many training data samples should be used?
 
-In addition to a total number (5400) @colditzEvaluationDifferentTraining2015 also reported a size relative to the study area (0.25%). Many studies and technical notes report a minimal number of samples per class (e.g. 50).
+In addition to a total number (5400) @colditzEvaluationDifferentTraining2015 also reported a size relative to the study area (0.25%). Many studies and technical notes report a minimal number of samples per class (e.g. 50). @colditzEvaluationDifferentTraining2015 found a minimum size of 50 samples per class to increase classification accuracy.
 
-According to @millardImportanceTrainingData2015 as many training data samples as possible are recommended to improve classification accuracy and stability. @rodriguez-galianoAssessmentEffectivenessRandom2012 in contrast, tested the effect of training data reduction and found that RF is not sensitive to a reduction until a certain threshold. They also state that training data size is not problematic for homogeneous classes, but larger number of samples are necessary for classes with high variability. 
+According to @millardImportanceTrainingData2015 as many training data samples as possible are recommended to improve classification accuracy and stability. @rodriguez-galianoAssessmentEffectivenessRandom2012 in contrast, tested the effect of training data reduction and found that RF is not sensitive to a reduction until a certain threshold. They also state that training data size is not problematic for homogeneous classes, but larger number of samples are necessary for classes with high variability. Generally training data needs to be larger for higher data dimensions (number of predictor variables) to mitigate the so called Hughes phenomenon [@belgiuRandomForestRemote2016].
 
 Hypothesis: The more the better. Optimal number of training samples (consent between cost and classification result) is dependent on the number of classes and class separability.
 
@@ -28,12 +30,14 @@ Hypothesis: The more the better. Optimal number of training samples (consent bet
 
 Is it better to use homogeneous or heterogeneous data within classes?
 
-A number of studies suggest that training data should be heterogeneous to represent all the variability present in a category [@palAssessmentEffectivenessDecision2003; @rodriguez-galianoAssessmentEffectivenessRandom2012]. But as @colditzEvaluationDifferentTraining2015 and @millardImportanceTrainingData2015 already state, a widely used method for training data collection in large-area mapping projects is to use polygons in homogeneous areas, which produces highly clustered and spatially auto-correlated training samples. 
+A number of studies suggest that training data should be heterogeneous to represent all the variability present in a category [@palAssessmentEffectivenessDecision2003; @rodriguez-galianoAssessmentEffectivenessRandom2012]. @colditzEvaluationDifferentTraining2015 evaluated homogeneous and heterogeneous training data and found a significant accuracy increase with heterogeneous training samples. But as @colditzEvaluationDifferentTraining2015 and @millardImportanceTrainingData2015 already state, a widely used method for training data collection in large-area mapping projects is to use polygons in homogeneous areas, which produces highly clustered and spatially auto-correlated training samples. 
 Training data does not necessarily have to be spatially evenly distributed. However, doing so (e.g. via systematic or simple random sampling) ensures spectrally heterogeneous training data which is recommended. 
 
 Should outliers be removed from training data samples a priori?
 
 According to the literature Random Forest classification is not very sensitive to outliers and hence it might not be necessary to treat outliers [@rodriguez-galianoAssessmentEffectivenessRandom2012]. This might be the reason why most studies do not mention outliers in their training data set. Considering the principle to select heterogeneous training data the removal of outliers might even be counterproductive. On the other side training data might contain mislabeled data and the treatment of outliers per class could assist removing false samples from training data. The effect is unclear as it is not known if and how many samples are labeled wrong and also it might be unnecessary as RF is relatively robust to noise [@rodriguez-galianoAssessmentEffectivenessRandom2012]. 
+
+Many studies use homogeneous reference data (e.g. pure forest stands) to avoid uncertain reference data.
 
 ### Questions for classes of different sizes
 
@@ -44,18 +48,21 @@ How to distribute the training data among classes?
 Class imbalance is known for increasing the bias towards the majority class [@dittmanEffectDataSampling2015]. 
 @dittmanEffectDataSampling2015 found that RF is relatively robust to imbalanced data.
 
-Many studies suggest to balance the training data in order to achieve good classification results. But usually these studies make no assumptions about the underlying class abundance in the data set they want to classify. Either they simply do not have this information or they assume it is equally distributed. But also for heavily imbalanced data sets many studies suggest some kind of resampling to balance the training data. The majority deals with two-class problems where one class is rare and this class should be classified with high precision (e.g. tumor cells). For this case they have shown that a balanced data set performs better in predicting the rare class. 
+Many studies suggest to balance the training data in order to achieve good classification results. But usually these studies make no assumptions about the underlying class abundance in the data set they want to classify. Either they simply do not have this information or they assume it is equally distributed. But also for heavily imbalanced data sets many studies suggest some kind of resampling to balance the training data. The majority deals with two-class problems where one class is rare and this class should be classified with high precision (e.g. fraud detection or rare desease diagnosing) [@chenUsingRandomForest2004a]. For this case they have shown that a balanced data set performs better in predicting the rare class. 
 Land-cover classes are seldom evenly distributed in the landscape. The same applies for tree species. Also, the goal is to produce a land-cover map with an overall high accuracy and not just for one class. Hence, it is of interest to which degree the distribution of training samples among classes effects the classification outcome. 
-@colditzEvaluationDifferentTraining2015, @freemanEvaluatingEffectivenessDownsampling2012 and @millardImportanceTrainingData2015 found that area proportional sampling of training data performs better than balanced data. @mellorExploringIssuesTraining2015 also found that a fine imbalance can be introduced (between best and worst performing classes) to improve the accuracy.
+@jinAssessingImpactTraining2014 showed that the proportionally allocated training sample design increases user's accuracy of the under-represented classes, and that the equally allocated training sample schema increases producer's accuracy of the under-represented classes. A number of studies found that area proportional sampling of training data performs better than balanced data if the priority objective is to increase overall accuracy (e.g. @colditzEvaluationDifferentTraining2015, @freemanEvaluatingEffectivenessDownsampling2012, @millardImportanceTrainingData2015, @jinAssessingImpactTraining2014, and @mellorExploringIssuesTraining2015) or area estimations [@colditzEvaluationDifferentTraining2015]. @mellorExploringIssuesTraining2015 also found that a fine imbalance can be introduced (between best and worst performing classes) to reduce errors in the most challenging classes. Hence, the choice of data allocation depends on which accuracy objectives have higher priority.
+
 Nevertheless, most studies use balanced training data sets.
+
+In a review on tree species classification @fassnachtReviewStudiesTree2016 mention the need for further research about classification approaches that include pre-knowledge on the expected class distribution.
 
 #### Methodoloy for redistribution
 
 If data has to be resampled what method should be used?
 
-In the case of systematic sampling or simple random sampling the training data is area-proportional and thus fulfills the recommendations in the literature (see above). But there might also be cases when resampling is necessary, for example if training  data is collected in subjective polygons and should be resized to fit actual class proportions or if the classification of difficult classes should be enhanced. Many studies evaluated the performance of various resampling techniques for the classification of imbalanced classes in general and for RF in particular. The most widely used methods are Upsampling (syn. Oversampling), where samples from the rare class are drawn multiple times to increase samples from this class, and Downsampling (syn. Undersampling), where only a part of the majority class is sampled to reduce the size. In Synthetic Minority Oversampling (SMOTE) new synthetic samples are created and drawn from the feature space of the minority class. Undersampling of the majority class is integrated in the RF algorithm and called Balanced Random Forest (BRF). Weighted Random Forest (WRF) uses the idea of cost-sensitive learning.
+In the case of systematic sampling or simple random sampling the training data is area-proportional and thus fulfills the recommendations in the literature (see above). But there might also be cases when resampling is necessary, for example if training  data is collected in subjective polygons and should be resized to fit actual class proportions or if the classification of difficult classes should be enhanced. Many studies evaluated the performance of various resampling techniques for the classification of imbalanced classes in general and for RF in particular. The most widely used methods are Upsampling (syn. Oversampling), where samples from the rare class are drawn multiple times to increase samples from this class, and Downsampling (syn. Undersampling), where only a part of the majority class is sampled to reduce the size. Othe methods include Synthetic Minority Oversampling (SMOTE), where new synthetic samples are created and drawn from the feature space of the minority class, or Partial Random Over-Sampling and Random Under-Sampling (PROSUS) where oversampling and undersampling are combined. Undersampling of the majority class is integrated in the RF algorithm and called Balanced Random Forest (BRF). Weighted Random Forest (WRF) uses the idea of cost-sensitive learning.
 
-@dittmanEffectDataSampling2015 found no statistical difference between under-sampling, over-sampling and SMOTE-sampling for RF. And also @mccarthyDoesCostsensitiveLearning2005 found no consistent winner between cost-sensitive learning, up-sampling and down-sampling. But they conclude that cost-sensitive learning tends to outperform sampling methods for large data sets and that up-sampling tends to perform better than down-sampling for small data sets. @japkowiczClassImbalanceProblem2002 also propose to use cost-sensitive learning over sampling methods. @chenUsingRandomForest2004 propose Balanced Random Forest (sampling) and Weighted Random Forest (cost-sensitive) to give good results but state that WRF might be more vulnarable to noise (mislabeled data). @freemanEvaluatingEffectivenessDownsampling2012 evaluated the effectiveness of down-sampling and found that it did not improve classification performance. Instead they suggest to use threshold optimization.
+@dittmanEffectDataSampling2015 found no statistical difference between under-sampling, over-sampling and SMOTE-sampling for RF. And also @mccarthyDoesCostsensitiveLearning2005 found no consistent winner between cost-sensitive learning, up-sampling and down-sampling. But they conclude that cost-sensitive learning tends to outperform sampling methods for large data sets and that up-sampling tends to perform better than down-sampling for small data sets. @japkowiczClassImbalanceProblem2002 also propose to use cost-sensitive learning over sampling methods. @chenUsingRandomForest2004 propose Balanced Random Forest (sampling) and Weighted Random Forest (cost-sensitive) to give good results but state that WRF might be more vulnerable to noise (mislabeled data). @freemanEvaluatingEffectivenessDownsampling2012 evaluated the effectiveness of down-sampling and found that it did not improve classification performance. Instead they suggest to use threshold optimization.
 
 ### Options not directly related to training data
 
@@ -63,7 +70,7 @@ In the case of systematic sampling or simple random sampling the training data i
 
 Is it better to use more or less predictor variables?
 
-Some studies perform feature selection methods to reduce the number of predictor variables. In most cases this is rather used to reduce the computational effort than to improve the classification accuracy. Most studies however, simply choose predictor variables a priori and stick to them. @millardImportanceTrainingData2015 found that many variables introduced noise in the classification and accuracy was lower. They advise to remove correlated variables and use only the most important variables for prediction. 
+Some studies perform feature selection methods to reduce the number of predictor variables. In most cases this is rather used to reduce the computational effort than to improve the classification accuracy. Most studies however, simply choose predictor variables a priori and stick to them. @millardImportanceTrainingData2015 found that many variables introduced noise in the classification and accuracy was lower. They advise to remove correlated variables and use only the most important variables for prediction. And @fassnachtComparisonFeatureReduction2014 found that classification approaches using feature selection for hyperspectral data outperfomed approaches based on all bands.
 
 #### Hyperparameter
 
@@ -71,6 +78,14 @@ Number of trees
 Minimum Leaf size
 Number of variables per split
 
+## Validation data
+
+Comparing studies is challenging, as it needs to be considered that accuracies are affected by the characteristics of the studied populations and different designs of the reference data [@breidenbachNationalMappingEstimation2020].
+
+
+@fassnachtReviewStudiesTree2016 state that many studies on tree species detection use unrepresentative and biased reference data (e.g. dominant trees), which leads to optimistic reported accuracies.
+
+@congaltonReviewAssessingAccuracy1991 mentioned a minimum of 50 samples per class. Although he warned that an appropriate sample size is dependent on a number of classification properties many studies relate to this. 
 
 ## Key Statements
 
@@ -145,6 +160,20 @@ Number of variables per split
 -   "An unbiased sampling strategy that ensures representative class proportions should be used"
 -   "spatial autocorrelation should be minimized within the training and validation data sample points"
 
+@belgiuRandomForestRemote2016
+
+- Training and validation data must be statistically independent.
+- training samples must be class balanced
+- training samples must be representative of the target classes
+- the training sample needs to be large enough to accommodate the increasing number of data dimensions (to mitigate the Hughes phenomenon).
+
+@nabourehHybridDataBalancing2020
+
+- propose another resampling method called PROSUS (Partial Random Over-Sampling and Random Under-Sampling)
+- state that "PROSRUS outperformed all other data balancing techniques, including ROS, RUS, SMOTE, and G-SMOTE"
+- "every dataset requires a specific balancing ratio to obtain the optimal result because the imbalance ratios and complexity levels are different for different datasets"
+
+
 ## Schemes used in selected studies
 
 @wesselEvaluationDifferentMachine2018
@@ -185,6 +214,7 @@ Number of variables per split
 -   validation data from different plots
 -   only dominant stands
 -   more or less proportional reference data (train and validation)
+-   all prediction variables were found to be significant
 
 @kollertExploringPotentialLand2021
 
@@ -202,3 +232,11 @@ Number of variables per split
 -   validation data for pure stands (>95%)
 -   models were validated using cross-validation with training data
 -   models were validated with independent forest stands
+
+@KovacevicSpatioTemporalClassificationFramework2020
+
+-   reference data from subjective polygons
+-   samples were equalized to same size by upsampling rare classes
+-   folded leave-location-out cross-validation used
+
+
